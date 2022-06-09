@@ -38,6 +38,16 @@ VDS _____
 
 1. Создаем базу данных для импорта данных
 
+2. Устанавливаем расширение rum-индекс для индектировниа tsvecor-полей (опционально)
+``` bash
+--- устанвка дополнительного расширения rum индекса (на ubuntu, как на винду не описано)
+https://github.com/postgrespro/rum
+USE_PGXS=1 pgxn install rum
+sudo apt install pgxnclient 
+sudo apt install postgresql-12-rum 
+create extension rum
+```
+
 2. Запускаем SQL-скрипт creator.sql который создает в базе все необходимы таблицы, функции и триггеры
 ``` bash
 psql -d {{dbname}} -f {{path2sctipt}}
@@ -50,6 +60,15 @@ psql -d {{dbname}} -f {{path2sctipt}}
 дополнительные лексеммы из файла **stopwords.txt**
 
 4. Запускаем скрипт импорта данных **import.py**
+
+
+**Пример поискового запроса**
+``` sql
+SELECT fulladdress, fts, for_nominatim, fts <=> websearch_to_tsquery('address','{искомый адрес}') AS rank 
+from gar_search2 
+where fts @@ websearch_to_tsquery('address','{искомый адрес}')
+ORDER BY rank;
+```
 
 ## Описание таблиц (где что хранится)
 
